@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Conversor de Moedas - Dark Dracura Soft</title>
+  <style>
+    /* Tema Dark Dracura Soft */
+    body {
+      background: #2c2f33;
+      color: #dfe6e9;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #23272a;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      text-align: center;
+      color: #a29bfe;
+      margin-bottom: 20px;
+    }
+    a {
+      color: #a29bfe;
+      text-decoration: none;
+      margin-bottom: 15px;
+      display: inline-block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #40444b;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #40444b;
+    }
+    select, input[type="number"] {
+      width: 90%;
+      padding: 8px;
+      background-color: #2c2f33;
+      border: 1px solid #40444b;
+      border-radius: 4px;
+      color: #dfe6e9;
+    }
+    input[type="submit"], button {
+      background-color: #a29bfe;
+      color: #2c2f33;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 5px;
+    }
+    input[type="submit"]:hover, button:hover {
+      background-color: #6c5ce7;
+    }
+    .result {
+      background-color: #40444b;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+    .add-row {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Conversor de Moedas</h1>
+    <a href="{{ url_for('add_city') }}">Adicionar nova cidade</a>
+    <form method="POST">
+      <table id="currencyTable">
+        <tr>
+          <th>Cidade</th>
+          <th>Moeda</th>
+          <th>Quantidade</th>
+          <th>Ação</th>
+        </tr>
+        <tr>
+          <td>
+            <select name="city">
+              {% for city in cities %}
+                <option value="{{ city }}">{{ city }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <select name="coin">
+              <option value="Copper">Cobre</option>
+              <option value="Silver">Prata</option>
+              <option value="Gold">Ouro</option>
+              <option value="Platinum">Platina</option>
+            </select>
+          </td>
+          <td>
+            <input type="number" name="quantity" step="any">
+          </td>
+          <td>
+            <button type="button" onclick="removeRow(this)">Remover</button>
+          </td>
+        </tr>
+      </table>
+      <button type="button" class="add-row" onclick="addRow()">Adicionar Moeda</button>
+      <br><br>
+      <label for="target">Converter para:</label>
+      <select name="target" id="target">
+        {% for city in cities %}
+          <option value="{{ city }}">{{ city }}</option>
+        {% endfor %}
+      </select>
+      <br><br>
+      <input type="submit" value="Converter">
+    </form>
+
+    {% if result %}
+    <div class="result">
+      <h2>Resultado da Conversão</h2>
+      <p>Total em cobre base: {{ total_base }}</p>
+      <ul>
+        {% for coin, amount in result.items() %}
+          <li>{{ coin }}: {{ amount }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+  <script>
+    function addRow(){
+      var table = document.getElementById("currencyTable");
+      var row = table.insertRow(-1);
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      var cell4 = row.insertCell(3);
+
+      // Usa as mesmas opções de cidade definidas na página
+      var cities = `{% for city in cities %}<option value="{{ city }}">{{ city }}</option>{% endfor %}`;
+      cell1.innerHTML = '<select name="city">' + cities + '</select>';
+      cell2.innerHTML = '<select name="coin"><option value="Copper">Cobre</option><option value="Silver">Prata</option><option value="Gold">Ouro</option><option value="Platinum">Platina</option></select>';
+      cell3.innerHTML = '<input type="number" name="quantity" step="any">';
+      cell4.innerHTML = '<button type="button" onclick="removeRow(this)">Remover</button>';
+    }
+
+    function removeRow(button) {
+      var row = button.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  </script>
+</body>
+</html>
